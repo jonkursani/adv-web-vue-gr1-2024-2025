@@ -3,7 +3,8 @@
 <!-- JavaScript (Logic) -->
 <!-- Script setup composition api -->
 <script setup>
-import { reactive, ref } from "vue";
+import { computed, reactive, ref } from "vue";
+import Detyra1 from "@/components/detyra/Detyra1.vue";
 
 const msg = ref("Hello from Vue.");
 const vueLink = ref("https://vuejs.org/");
@@ -76,6 +77,58 @@ const user = reactive({
 }); // { id: 1, name: "Filan", age: 20 }
 
 // user.id;
+
+// computed properties
+const author = reactive({
+  name: "John Doe",
+  books: [
+    { title: "Book 1", year: 2020 },
+    { title: "Book 2", year: 2021 },
+  ],
+});
+
+const hasPublishedBooks = computed(() => {
+  return author.books.length > 0 ? "Yes" : "No";
+});
+
+const randomTextComputed = computed(() => {
+  return Math.random() > 0.5 ? "Drink coffe" : "Go to fitness";
+});
+
+const btnText = computed(() => {
+  return isSeen.value ? "Hide" : "Show";
+});
+
+// Class and style binding
+const isActive = ref(true);
+const hasError = ref(false);
+const classObject = reactive({
+  // css: variabla ne vue (script)
+  active: true,
+  "text-danger": false,
+});
+
+const isCompleted = ref(false);
+const classObjectComputed = computed(() => {
+  return {
+    completed: isCompleted.value,
+    // completed: isCompleted.value === true
+    "text-danger": !isCompleted.value, // && hasError.value,
+    // 'text-danger': isCompleted.value === false
+  };
+});
+
+const activeClass = ref("active");
+const errorClass = ref("text-danger");
+
+// style binding
+const redColor = ref("red");
+const uppercase = ref("uppercase");
+const styleObject = reactive({
+  color: "indigo",
+  textTransform: "uppercase",
+  fontSize: "20px",
+});
 </script>
 
 <!-- HTML (Structure) -->
@@ -94,7 +147,8 @@ const user = reactive({
   <!-- {{ Math.random() > 0.5 ? "Drink coffe" : "Go to fitness" }} -->
   {{ randomText() }}
   <p v-if="isSeen">Now paragraph is seen</p>
-  <button @click="isSeen = !isSeen">{{ isSeen ? "Hide" : "Show" }} paragraph</button>
+  <!-- <button @click="isSeen = !isSeen">{{ isSeen ? "Hide" : "Show" }} paragraph</button> -->
+  <button @click="isSeen = !isSeen">{{ btnText }} paragraph</button>
 
   <!-- .prevent => modifier -->
   <form @submit.prevent="onSubmit">
@@ -125,8 +179,39 @@ const user = reactive({
   <p>UserId: {{ user.id }}</p>
   <p>Name: {{ user.name }}</p>
   <p>Age: {{ user.age }}</p>
+
+  <!-- Computed properties -->
+  <!-- <p>Has published books: {{ author.books.length > 0 ? "Yes" : "No" }}</p> -->
+  <p>Has published books: {{ hasPublishedBooks }}</p>
+  <p>Random text computed: {{ randomTextComputed }}</p>
+
+  <!-- Class and style binding -->
+  <!-- 'active' klasa ne css, 'isActive' variabla ne scripte -->
+  <p class="other-class" :class="{ active: isActive, 'text-danger': hasError }">Class binding</p>
+  <p class="other-class" :class="classObject">Class object</p>
+  <p :class="classObjectComputed" @click="isCompleted = !isCompleted">Class object computed (click to toggle)</p>
+  <p :class="['active', 'text-danger']">Binding to array</p>
+  <p :class="[activeClass, errorClass]">Binding to array</p>
+  <p :class="[activeClass, isCompleted ? 'completed' : '']">Binding to array</p>
+  <p :style="{ color: redColor, textTransform: 'uppercase' }">Style binding</p>
+  <p :style="styleObject">Style object</p>
+
+  <Detyra1 />
 </template>
 
 <!-- CSS (Style) -->
 <!-- Scoped ky CSS aplikohet vetem ne kete file -->
-<style scoped></style>
+<style scoped>
+.active {
+  font-weight: bold;
+}
+
+.text-danger {
+  color: red;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: green;
+}
+</style>
