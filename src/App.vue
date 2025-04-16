@@ -129,6 +129,56 @@ const styleObject = reactive({
   textTransform: "uppercase",
   fontSize: "20px",
 });
+
+// Condtional rendering
+const awesome = ref(true);
+const type = ref("C");
+
+// Two way data binding
+const inp = ref("");
+const onUserInput = (event) => {
+  inp.value = event.target.value;
+};
+
+// Todo list
+const newTodo = ref("");
+let todoId = 1;
+const todos = ref([
+  { id: todoId++, text: "Learn Vue" },
+  { id: todoId++, text: "Learn React" },
+]);
+const addTodo = () => {
+  // alert(newTodo.value);
+  // if (newTodo.value.trim() === "") {
+  //   alert("Please enter a todo.");
+  //   return;
+  // }
+
+  // "" => false => !false => true
+  // newTodo === '' || newTodo === null || newTodo === undefined
+  if (!newTodo.value) {
+    // nese ska vlere
+    alert("Please enter a todo.");
+    return;
+  }
+
+  todos.value.push({
+    id: todoId++,
+    text: newTodo.value,
+  });
+
+  newTodo.value = ""; // clear the input
+};
+
+const removeTodo = (id) => {
+  // alert(id);
+
+  // kthemi te gjitha elementet qe nuk jane te barabarta me id qe e kemi ne parameter
+  todos.value = todos.value.filter((todo) => todo.id !== id);
+
+  // const index = todos.value.findIndex((todo) => todo.id === id);
+  // todos.value.splice(index, 1);
+};
 </script>
 
 <!-- HTML (Structure) -->
@@ -197,6 +247,77 @@ const styleObject = reactive({
   <p :style="styleObject">Style object</p>
 
   <Detyra1 />
+
+  <!-- Conditional rendering v-if="condition", v-else-if, v-else -->
+  <!-- 
+      if (true) {
+      } else {
+      }
+  -->
+
+  <h3>Conditional rendering</h3>
+  <p v-if="awesome">
+    Vue is awesome Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore natus rem vitae, harum esse quas
+    beatae? Molestiae, neque, iure a impedit nostrum iusto debitis similique sequi maxime, consequuntur in maiores.
+  </p>
+  <!-- <span></span> error me vendos tag ne mes if dhe else-->
+  <p v-else>Oh nooo.. 😒</p>
+  <button @click="awesome = !awesome">Toggle</button>
+
+  <p v-if="type === 'A'">A</p>
+  <!-- <span></span> -->
+  <p v-else-if="type === 'B'">B</p>
+  <!-- <span></span> -->
+  <p v-else>Not A/B</p>
+
+  <template v-if="false">
+    <h3>Template</h3>
+    <p>Paragraph</p>
+  </template>
+  <template v-else>
+    <h3>Other template</h3>
+    <p>Paragraph</p>
+  </template>
+
+  <!-- V-show e shton ni display:none; te elementi nuk e largon prej DOM-it -->
+  <p v-show="awesome">V-show</p>
+
+  <h3>List rendering</h3>
+
+  <h4>Author: {{ author.name }}</h4>
+  <p>Books:</p>
+  <ul v-if="author.books.length > 0">
+    <!-- <li v-for="(book, i) in author.books">{{ i + 1 }} - {{ book.title }} ({{ book.year }})</li> -->
+    <!-- <li v-for="{ title, year } in author.books">{{ title }} ({{ year }})</li> -->
+    <!-- <li v-for="({ title, year }, index) in author.books">{{ index }} - {{ title }} ({{ year }})</li> -->
+    <!-- :key duhet te jete unike -->
+    <li v-for="(book, i) in author.books" :key="i">{{ i + 1 }} - {{ book.title }} ({{ book.year }})</li>
+  </ul>
+  <p v-else>No books</p>
+
+  <ul>
+    <li v-for="(u, k, i) in user">{{ i }} - {{ k }} - {{ u }}</li>
+  </ul>
+
+  <!-- Two way data binding -->
+  <!-- v-model -->
+  <!-- <input type="text" :value="inp" @input="onUserInput" /> -->
+  <!-- let variabla = '' sbon -->
+  <!-- let variabla = ref() ose reactive() -->
+  <input type="text" v-model="inp" />
+  {{ inp }}
+
+  <h4>Todo List</h4>
+  <input type="text" v-model.trim="newTodo" @keyup.enter="addTodo" />
+  <button @click="addTodo">+ Add</button>
+
+  <ul v-if="todos.length > 0">
+    <li v-for="todo in todos" :key="todo.id">
+      {{ todo.id }}: {{ todo.text }}
+      <button @click="removeTodo(todo.id)">X</button>
+    </li>
+  </ul>
+  <p v-else>No todos, add one</p>
 </template>
 
 <!-- CSS (Style) -->
