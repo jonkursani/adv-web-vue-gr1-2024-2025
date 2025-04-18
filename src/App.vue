@@ -144,8 +144,8 @@ const onUserInput = (event) => {
 const newTodo = ref("");
 let todoId = 1;
 const todos = ref([
-  { id: todoId++, text: "Learn Vue" },
-  { id: todoId++, text: "Learn React" },
+  { id: todoId++, text: "Learn Vue", completed: true },
+  { id: todoId++, text: "Learn React", completed: false },
 ]);
 const addTodo = () => {
   // alert(newTodo.value);
@@ -165,6 +165,7 @@ const addTodo = () => {
   todos.value.push({
     id: todoId++,
     text: newTodo.value,
+    completed: false,
   });
 
   newTodo.value = ""; // clear the input
@@ -179,6 +180,42 @@ const removeTodo = (id) => {
   // const index = todos.value.findIndex((todo) => todo.id === id);
   // todos.value.splice(index, 1);
 };
+
+const hideCompleted = ref(false);
+const filteredTodos = computed(() => {
+  if (hideCompleted.value) {
+    return todos.value.filter((todo) => !todo.completed);
+  } else {
+    return todos.value;
+  }
+});
+
+// Form input bindings
+const text = ref("");
+const txtArea = ref("");
+const checked = ref(false);
+const checkedNames = ref(["enis"]);
+const picked = ref("two");
+const selected = ref("");
+const options = ref([
+  // {id: 1, name: "Option 1"},
+  { val: "a", text: "A" },
+  { val: "b", text: "B" },
+  { val: "c", text: "C" },
+  { val: "d", text: "D" },
+]);
+const pickOptions = reactive({
+  one: "one",
+  two: "two",
+});
+const number = ref(null);
+
+const person = reactive({
+  firstName: '',
+  lastName: '',
+  age: null,
+  hobies: [],
+})
 </script>
 
 <!-- HTML (Structure) -->
@@ -312,12 +349,91 @@ const removeTodo = (id) => {
   <button @click="addTodo">+ Add</button>
 
   <ul v-if="todos.length > 0">
-    <li v-for="todo in todos" :key="todo.id">
-      {{ todo.id }}: {{ todo.text }}
+    <li v-for="todo in filteredTodos" :key="todo.id">
+      <input type="checkbox" v-model="todo.completed" />
+      <span :class="{ completed: todo.completed }">{{ todo.id }}: {{ todo.text }}</span>
       <button @click="removeTodo(todo.id)">X</button>
     </li>
   </ul>
   <p v-else>No todos, add one</p>
+
+  <button @click="hideCompleted = !hideCompleted">{{ hideCompleted ? "Show all" : "Hide completed" }}</button>
+
+  <h3>Form input bindings</h3>
+  <h4>Text</h4>
+  <input type="text" v-model="text" />
+  <p>Text: {{ text }}</p>
+
+  <h4>Text area</h4>
+  <textarea v-model="txtArea"></textarea>
+  <p>Text area: {{ txtArea }}</p>
+
+  <h4>Checkbox</h4>
+  <input type="checkbox" id="chk" v-model="checked" />
+  <label for="chk">Is checked</label>
+  <p>Checked: {{ checked }}</p>
+
+  <h4>Multiple checkbox</h4>
+  <!-- 
+      Kur keni multiple (choices) checkbox ateher variabla qe vendoset te v-model duhet te jete array
+      vlera qe ruhet ne array eshte vlera e atributit value
+  -->
+  <input type="checkbox" id="enis" value="enis" v-model="checkedNames" />
+  <label for="enis">Enis</label>
+
+  <input type="checkbox" id="partin" value="partin" v-model="checkedNames" />
+  <label for="partin">Partin</label>
+
+  <input type="checkbox" id="gresa" value="gresa" v-model="checkedNames" />
+  <label for="gresa">Gresa</label>
+
+  <p>Checked names: {{ checkedNames }}</p>
+
+  <h4>Radio button</h4>
+  <input type="radio" id="one" :value="pickOptions.one" v-model="picked" />
+  <label for="one">One</label>
+
+  <input type="radio" id="two" :value="pickOptions.two" v-model="picked" />
+  <label for="two">Two</label>
+
+  <p>Picked: {{ picked }}</p>
+
+  <h4>Select</h4>
+  <select v-model="selected">
+    <option value="" disabled>Please select one</option>
+    <!-- <option value="a">A</option>
+    <option value="b">B</option>
+    <option value="c">C</option> -->
+    <option v-for="opt in options" :key="opt.val" :value="opt.val">
+      {{ opt.text }}
+    </option>
+  </select>
+  <p>Selected: {{ selected }}</p>
+
+  <!-- Trim, Number modifiers -->
+  <h4>Trim/Number modifiers</h4>
+  <input type="text" v-model.trim="text" />
+  <p>Trimmed text: {{ text }}</p>
+  <input type="number" v-model.number="number" />
+  <p>Number: {{ number }}</p>
+
+  <!-- 
+      Detyre:
+      Krijoni nje forme me inpute
+      1. Emri (text)
+      2. Mbiemri (text)
+      3. Mosha (number)
+      4. Gjinia (radio) - mashkull, femer
+      5. Hoby (checkbox) - sport, muzike, art
+      6. A eshte student (checkbox) - true/false
+      7. Drejtimi (select) - informatike, arkitekture, dizajn
+      8. Para se ti beni submit form, validoni te gjitha inputet
+      
+      Button submit formen edhe e shton qet person ne nje array
+      @submit.prevent="onSubmit"
+
+      Array shfaqeni ne nje tabele me v-for
+   -->
 </template>
 
 <!-- CSS (Style) -->
