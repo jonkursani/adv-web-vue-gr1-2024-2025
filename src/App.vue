@@ -5,6 +5,9 @@
 <script setup>
 import { computed, reactive, ref } from "vue";
 import Detyra1 from "@/components/detyra/Detyra1.vue";
+// importimi local i komponentes
+import ChildComp from "@/components/ChildComp.vue";
+import ListPeople from "@/components/ListPeople.vue";
 
 const msg = ref("Hello from Vue.");
 const vueLink = ref("https://vuejs.org/");
@@ -211,11 +214,22 @@ const pickOptions = reactive({
 const number = ref(null);
 
 const person = reactive({
-  firstName: '',
-  lastName: '',
+  firstName: "",
+  lastName: "",
   age: null,
   hobies: [],
-})
+});
+
+// Componets
+// parametri i dyte ne emit, bohet bind ne parametrin e funksionit
+const handleChildEvent = (msg) => {
+  // alert(msg);
+  alert(msg.name);
+};
+
+const removePerson = (id) => {
+  alert("Remove person with id: " + id);
+};
 </script>
 
 <!-- HTML (Structure) -->
@@ -434,6 +448,31 @@ const person = reactive({
 
       Array shfaqeni ne nje tabele me v-for
    -->
+
+  <h3>Components</h3>
+
+  <!-- Menyra e thirrjes se komponentes -->
+  <!-- <ChildComp name="Filan" /> -->
+  <!-- <child-comp name="Enis" :age="20" /> -->
+  <child-comp :user="{ name: 'Enis', age: 20 }" @child-event="handleChildEvent" />
+
+  <!-- Detyren paraprake modifikojeni 
+    Krijoni nje komponente qe ben shfaqjen e te dhenave (
+      X butoni - delete ni person, id e beni emit te comp prind
+    )
+    Krijoni nje komponente qe ben insertimin e te dhenave (
+      emit ni event submit dhe e dergoni te prindi per insertim
+    )
+   -->
+
+  <list-people
+    :people="[
+      { id: 1, name: 'Enis', age: 20 },
+      { id: 2, name: 'Filan', age: 25 },
+      { id: 3, name: 'Gresa', age: 30 },
+    ]"
+    @remove-person="removePerson"
+  />
 </template>
 
 <!-- CSS (Style) -->
