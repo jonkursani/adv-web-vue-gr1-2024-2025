@@ -4,6 +4,8 @@
 <!-- Script setup composition api -->
 <script setup>
 import { computed, reactive, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useCounterStore } from "@/stores/counter";
 import Detyra1 from "@/components/detyra/Detyra1.vue";
 // importimi local i komponentes
 import ChildComp from "@/components/ChildComp.vue";
@@ -231,6 +233,16 @@ const handleChildEvent = (msg) => {
 const removePerson = (id) => {
   alert("Remove person with id: " + id);
 };
+
+// Router
+const router = useRouter();
+const goToUser = (id) => {
+  // router.push(`/user/${id}`); // navigimi me path
+  router.push({ name: "user", params: { id } });
+};
+
+// Store
+const counterStore = useCounterStore();
 </script>
 
 <!-- HTML (Structure) -->
@@ -484,6 +496,26 @@ const removePerson = (id) => {
   <br />
   <!-- name eshte case sensive -->
   <router-link :to="{ name: 'about' }">About with name</router-link>
+  <br />
+  <router-link to="/user/1">User 1</router-link>
+  <br />
+  <router-link :to="{ name: 'user', params: { id: 2 } }">User 2</router-link>
+  <br />
+  <button @click="goToUser(3)">User 3</button>
+
+  <h3>Store</h3>
+  <p>Count: {{ counterStore.count }}</p>
+
+  <!-- 
+       Detyre
+
+       PeopleView (buton qe bon delete personin prej array-it ne store)
+       AddPersonView (shton pernonin e ri ne array)
+       UpdatePersonView (kerko personin me id qe vjen prej url) 
+
+       Definojeni nje store te ri usePeopleStore qe permban metodat per addPerson, updatePerson, deletePerson
+       array-in e personave e ruani ne store
+   -->
 </template>
 
 <!-- CSS (Style) -->
