@@ -516,6 +516,8 @@ const counterStore = useCounterStore();
        Definojeni nje store te ri usePeopleStore qe permban metodat per addPerson, updatePerson, deletePerson
        array-in e personave e ruani ne store
    -->
+
+  <router-link :to="{ name: 'people' }">List of People</router-link>
 </template>
 
 <!-- CSS (Style) -->
