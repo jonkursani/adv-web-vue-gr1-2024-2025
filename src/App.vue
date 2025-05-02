@@ -1,6 +1,7 @@
-<script setup></script>
+<script setup>
+import TheLayout from "@/components/ui/TheLayout.vue";
+</script>
 
 <template>
-  <!-- Router view i tregon qe ketu kan mu renderu view-t e definuara -->
-  <router-view />
+  <the-layout />
 </template>
