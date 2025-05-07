@@ -1,31 +1,46 @@
 <script setup>
-import {reactive} from "vue";
+import {reactive, ref} from "vue";
 import {useAuthStore} from "@/stores/auth.js";
 import {useRoute, useRouter} from "vue-router";
+import {useAppToast} from "@/composables/useAppToast.js";
+import AppButton from "@/components/ui/AppButton.vue";
 
 const authStore = useAuthStore()
 const router = useRouter()
 const route = useRoute()
+const isLoading = ref(false)
 
 const user = reactive({
   email: '',
   password: ''
 })
 
+const toast = useAppToast()
+// toast.showError()
+// const {showSuccess} = useAppToast()
+
 const handleSubmit = async () => {
   if (!user.email || !user.password) {
-    alert('Please fill in all fields')
+    // alert('Please fill in all fields')
+    toast.showWarning('Please fill in all fields')
     return;
   }
 
   try {
+    isLoading.value = true
     await authStore.logIn(user)
     const redirectUrl = `${route.query.redirect || '/'}`
     await router.push(redirectUrl)
-  }
-  catch (e) {
-    console.log(e.response?.data?.message)
-    alert('Invalid email or password')
+    // isLoading.value = false
+  } catch (e) {
+    // console.log(e.response?.data?.message)
+    // alert('Invalid email or password')
+    // error i axios
+    // toast.showError(e.response?.data?.message || 'Something went wrong')
+    // isLoading.value = false
+    throw e;
+  } finally {
+    isLoading.value = false
   }
 }
 </script>
@@ -62,7 +77,19 @@ const handleSubmit = async () => {
               </div>
             </div>
 
-            <button class="btn btn-primary btn-block btn-lg shadow-lg mt-5">Log in</button>
+            <app-button :is-loading="isLoading"
+                        class="btn btn-primary btn-block btn-lg shadow-lg mt-5"
+            >
+              Log in
+            </app-button>
+            <!--            <button class="btn btn-primary btn-block btn-lg shadow-lg mt-5"-->
+            <!--                    type="button"-->
+            <!--                    disabled-->
+            <!--                    v-if="isLoading">-->
+            <!--              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>-->
+            <!--              Log in-->
+            <!--            </button>-->
+            <!--            <button class="btn btn-primary btn-block btn-lg shadow-lg mt-5" v-else>Log in</button>-->
           </form>
           <div class="text-center mt-5 text-lg fs-4">
             <p class="text-gray-600">Don't have an account? <a href="auth-register.html" class="font-bold">Sign

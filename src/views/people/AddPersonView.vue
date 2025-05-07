@@ -1,7 +1,9 @@
 <script setup>
-import { usePeopleStore } from "@/stores/people";
-import { reactive } from "vue";
-import { useRouter } from "vue-router";
+import {usePeopleStore} from "@/stores/people";
+import {reactive} from "vue";
+import {useRouter} from "vue-router";
+import AppCard from "@/components/ui/AppCard.vue";
+import AppButton from "@/components/ui/AppButton.vue";
 
 const person = reactive({
   firstName: "",
@@ -21,33 +23,39 @@ const handleSubmit = () => {
 
   store.addPerson(person);
 
-  router.push({ name: "people" });
+  router.push({name: "people"});
 };
 
-const goBack = () => {
-  router.push({ name: "people" });
-};
+// const goBack = () => {
+//   router.push({name: "people"});
+// };
 </script>
 
 <template>
-  <h1>Add person</h1>
 
-  <form @submit.prevent="handleSubmit">
-    <div>
-      <label for="firstName">First Name</label>
-      <input type="text" id="firstName" v-model.trim="person.firstName" />
-    </div>
-    <div>
-      <label for="lastName">Last Name</label>
-      <input type="text" id="lastName" v-model.trim="person.lastName" />
-    </div>
-    <div>
-      <label for="age">Age</label>
-      <input type="number" id="age" v-model.number="person.age" />
-    </div>
-    <div>
-      <button type="submit">Submit</button>
-      <button @click="goBack">Cancel</button>
-    </div>
-  </form>
+  <app-card>
+    <template #header>
+      <h5>Add person</h5>
+    </template>
+
+    <form @submit.prevent="handleSubmit">
+      <div class="mb-3">
+        <label for="firstName">First Name</label>
+        <input type="text" class="form-control" id="firstName" v-model.trim="person.firstName"/>
+      </div>
+      <div class="mb-3">
+        <label for="lastName">Last Name</label>
+        <input type="text" class="form-control" id="lastName" v-model.trim="person.lastName"/>
+      </div>
+      <div class="mb-3">
+        <label for="age">Age</label>
+        <input type="number" class="form-control" id="age" v-model.number="person.age"/>
+      </div>
+      <div class="text-center">
+        <app-button type="submit" class="btn btn-primary">Submit</app-button>
+        <!--        <button @click="goBack">Cancel</button>-->
+        <router-link :to="{ name: 'people' }" class="btn btn-secondary ms-2">Cancel</router-link>
+      </div>
+    </form>
+  </app-card>
 </template>
