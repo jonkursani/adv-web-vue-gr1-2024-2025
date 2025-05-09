@@ -8,6 +8,8 @@ import UserView from "@/views/UserView.vue";
 import {createRouter, createWebHistory} from "vue-router";
 import AuthView from "@/views/auth/AuthView.vue";
 import {useAuthStore} from "@/stores/auth.js";
+import DepartmentRoutes from "@/router/departmentRoutes.js";
+import PeopleRoutes from "@/router/peopleRoutes.js";
 
 const routes = [
     {
@@ -46,30 +48,10 @@ const routes = [
             requiresAuth: true,
         }
     },
-    {
-        path: "/people",
-        name: "people",
-        component: PeopleView,
-        meta: {
-            requiresAuth: true,
-        }
-    },
-    {
-        path: "/people/add",
-        name: "add-person",
-        component: AddPersonView,
-        meta: {
-            requiresAuth: true,
-        }
-    },
-    {
-        path: "/people/:id",
-        name: "update-person",
-        component: UpdatePersonView,
-        meta: {
-            requiresAuth: true,
-        }
-    },
+    ...PeopleRoutes,
+    // ketu ju renderohen komplet routat e departamenteve
+    // me ndihmen e spread operatorit (...)
+    ...DepartmentRoutes,
     // catch all route
     {
         path: "/:notFound(.*)",

@@ -4,11 +4,12 @@ import {useAuthStore} from "@/stores/auth.js";
 import {useRoute, useRouter} from "vue-router";
 import {useAppToast} from "@/composables/useAppToast.js";
 import AppButton from "@/components/ui/AppButton.vue";
+import {useLoading} from "@/composables/useLoading.js";
 
 const authStore = useAuthStore()
 const router = useRouter()
 const route = useRoute()
-const isLoading = ref(false)
+// const isLoading = ref(false)
 
 const user = reactive({
   email: '',
@@ -19,6 +20,9 @@ const toast = useAppToast()
 // toast.showError()
 // const {showSuccess} = useAppToast()
 
+// const loadingHelper = useLoading()
+const {isLoading, withLoading} = useLoading()
+
 const handleSubmit = async () => {
   if (!user.email || !user.password) {
     // alert('Please fill in all fields')
@@ -26,22 +30,28 @@ const handleSubmit = async () => {
     return;
   }
 
-  try {
-    isLoading.value = true
-    await authStore.logIn(user)
-    const redirectUrl = `${route.query.redirect || '/'}`
-    await router.push(redirectUrl)
-    // isLoading.value = false
-  } catch (e) {
-    // console.log(e.response?.data?.message)
-    // alert('Invalid email or password')
-    // error i axios
-    // toast.showError(e.response?.data?.message || 'Something went wrong')
-    // isLoading.value = false
-    throw e;
-  } finally {
-    isLoading.value = false
-  }
+  // try {
+  //   isLoading.value = true
+  //   await authStore.logIn(user)
+  //   const redirectUrl = `${route.query.redirect || '/'}`
+  //   await router.push(redirectUrl)
+  //   // isLoading.value = false
+  // } catch (e) {
+  //   // console.log(e.response?.data?.message)
+  //   // alert('Invalid email or password')
+  //   // error i axios
+  //   // toast.showError(e.response?.data?.message || 'Something went wrong')
+  //   // isLoading.value = false
+  //   throw e;
+  // } finally {
+  //   isLoading.value = false
+  // }
+
+  await withLoading(async () => {
+      await authStore.logIn(user)
+      const redirectUrl = `${route.query.redirect || '/'}`
+      await router.push(redirectUrl)
+  })
 }
 </script>
 

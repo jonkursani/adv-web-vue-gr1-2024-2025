@@ -2,6 +2,14 @@
 import {usePeopleStore} from "@/stores/people";
 import {useRouter} from "vue-router";
 import AppCard from "@/components/ui/AppCard.vue";
+import DataTable from 'datatables.net-vue3';
+import DataTablesCore from 'datatables.net';
+import DataTablesBS5 from 'datatables.net-bs5';
+import {onMounted} from "vue";
+
+// Initialize DataTables with Bootstrap 5 styles
+DataTable.use(DataTablesCore);
+DataTable.use(DataTablesBS5);
 
 const peopleStore = usePeopleStore();
 const router = useRouter();
@@ -15,6 +23,10 @@ const onDeletePerson = (id) => {
     // Call the delete method from the store
   }
 };
+
+onMounted(() => {
+  new DataTablesCore('#people')
+})
 </script>
 
 <template>
@@ -27,7 +39,7 @@ const onDeletePerson = (id) => {
     </template>
 
 
-    <table class="table table-striped table-bordered">
+    <table id="people" class="table table-striped table-bordered">
       <thead>
       <tr>
         <th>#</th>
@@ -52,3 +64,17 @@ const onDeletePerson = (id) => {
     </table>
   </app-card>
 </template>
+
+<style scoped>
+#people.dataTable th,
+#people.dataTable td {
+  font-size: 14px;
+  color: #333;
+  background-color: #f9f9f9;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+  border: 1px solid #ccc;
+  padding: 6px;
+}
+</style>
