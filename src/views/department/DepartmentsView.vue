@@ -8,6 +8,7 @@ import DataTablesCore from 'datatables.net';
 import DataTablesBS5 from 'datatables.net-bs5';
 import AppSpinner from "@/components/ui/AppSpinner.vue";
 import AppButton from "@/components/ui/AppButton.vue";
+import {useAppToast} from "@/composables/useAppToast.js";
 
 // Initialize DataTables with Bootstrap 5 styles
 DataTable.use(DataTablesCore);
@@ -23,6 +24,25 @@ const loadDepartments = async () => {
   })
 }
 
+const {showSuccess} = useAppToast()
+const onDelete = async (id) => {
+  if (confirm('Are you sure you want to delete this department?')) {
+    try {
+      isLoading.value = true
+      const response = await DepartmentService.deleteDepartment(id)
+      if (response) {
+        showSuccess('Department deleted successfully')
+        location.reload()
+        // await loadDepartments()
+      }
+    } catch (e) {
+      throw e;
+    } finally {
+      isLoading.value = false
+    }
+  }
+}
+
 onMounted(async () => {
   await loadDepartments()
   new DataTablesCore('#departments')
@@ -32,7 +52,10 @@ onMounted(async () => {
 <template>
   <app-card>
     <template #header>
-      <h5>Departments</h5>
+      <div class="d-flex justify-content-between">
+        <h5>Departments</h5>
+        <router-link :to="{name: 'create-department'}" class="btn btn-primary">Add</router-link>
+      </div>
     </template>
 
     <!--    <p v-if="isLoading">Loading...</p>-->
@@ -54,11 +77,12 @@ onMounted(async () => {
         <td>{{ department.name }}</td>
         <td>{{ department.location }}</td>
         <td>
-          <router-link to="" class="btn btn-secondary me-2">
+          <router-link :to="{name: 'update-department', params: { id: department.id }}"
+                       class="btn btn-secondary me-2">
             <i class="bi bi-pencil-fill"></i>
           </router-link>
 
-          <app-button class="btn btn-danger">
+          <app-button class="btn btn-danger" @click="onDelete(department.id)">
             <i class="bi bi-trash-fill"></i>
           </app-button>
         </td>
