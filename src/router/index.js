@@ -1,15 +1,13 @@
 import AboutView from "@/views/AboutView.vue";
 import HomeView from "@/views/HomeView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
-import AddPersonView from "@/views/people/AddPersonView.vue";
-import PeopleView from "@/views/people/PeopleView.vue";
-import UpdatePersonView from "@/views/people/UpdatePersonView.vue";
 import UserView from "@/views/UserView.vue";
 import {createRouter, createWebHistory} from "vue-router";
 import AuthView from "@/views/auth/AuthView.vue";
 import {useAuthStore} from "@/stores/auth.js";
 import DepartmentRoutes from "@/router/departmentRoutes.js";
 import PeopleRoutes from "@/router/peopleRoutes.js";
+import EmployeeRoutes from "@/router/employeeRoutes.js";
 
 const routes = [
     {
@@ -52,6 +50,7 @@ const routes = [
     // ketu ju renderohen komplet routat e departamenteve
     // me ndihmen e spread operatorit (...)
     ...DepartmentRoutes,
+    ...EmployeeRoutes,
     // catch all route
     {
         path: "/:notFound(.*)",
