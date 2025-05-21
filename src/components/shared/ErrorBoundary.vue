@@ -15,7 +15,7 @@ onErrorCaptured((err) => {
   if (err.response && (err.response.status === 401 || err.response.status === 403)) {
     store.logOut()
 
-    showError('Session expired. Please log in again.')
+    showError(err.response?.data?.message || 'Session expired. Please log in again.')
 
     // Redirect to the login page after a short delay
     setTimeout(() => {

@@ -56,7 +56,10 @@ onMounted(async () => {
 <template>
   <app-card>
     <template #header>
-      <h5>Employees</h5>
+      <div class="d-flex justify-content-between">
+        <h5>Employees</h5>
+        <router-link :to="{name:'create-employee'}" class="btn btn-primary">Add</router-link>
+      </div>
     </template>
 
     <div class="text-center" v-if="isLoading">
