@@ -5,6 +5,7 @@ import AppSpinner from "@/components/ui/AppSpinner.vue";
 import EmployeeService from "@/services/employeeService.js";
 import AppDatatable from "@/components/ui/AppDatatable.vue";
 import AppButton from "@/components/ui/AppButton.vue";
+import {useAppToast} from "@/composables/useAppToast.js";
 
 // import DataTable from 'datatables.net-vue3';
 // import DataTablesCore from 'datatables.net';
@@ -47,6 +48,26 @@ const loadEmployees = async () => {
   }
 }
 
+const {showSuccess, showDialog} = useAppToast()
+const onDeleteEmployee = async (id) => {
+  const result = await showDialog()
+
+  if (result.isConfirmed) {
+    try {
+      isLoading.value = true
+      const response = await EmployeeService.deleteEmployee(id)
+      if (response) {
+        showSuccess('Employee deleted successfully')
+        await loadEmployees()
+      }
+    } catch (e) {
+      throw e;
+    } finally {
+      isLoading.value = false
+    }
+  }
+}
+
 onMounted(async () => {
   await loadEmployees()
   // new DataTablesCore('#employees')
@@ -54,55 +75,60 @@ onMounted(async () => {
 </script>
 
 <template>
-  <app-card>
-    <template #header>
-      <div class="d-flex justify-content-between">
-        <h5>Employees</h5>
-        <router-link :to="{name:'create-employee'}" class="btn btn-primary">Add</router-link>
-      </div>
-    </template>
-
-    <div class="text-center" v-if="isLoading">
-      <app-spinner :is-loading="isLoading"/>
-    </div>
-    <!--    <table v-else class="table table-striped table-bordered" id="employees">-->
-    <!--      <thead>-->
-    <!--      <tr>-->
-    <!--        <th>#</th>-->
-    <!--        <th>First name</th>-->
-    <!--        <th>Last name</th>-->
-    <!--        <th>Department</th>-->
-    <!--        <th>Hire date</th>-->
-    <!--        <th>Email</th>-->
-    <!--      </tr>-->
-    <!--      </thead>-->
-    <!--      <tbody>-->
-    <!--      <tr v-for="employee in employees" :key="employee.id">-->
-    <!--        <td>{{ employee.id }}</td>-->
-    <!--        <td>{{ employee.firstName }}</td>-->
-    <!--        <td>{{ employee.lastName }}</td>-->
-    <!--        <td>{{ employee.department.name }}</td>-->
-    <!--        <td>{{ employee.hireDate }}</td>-->
-    <!--        <td>{{ employee.email }}</td>-->
-    <!--      </tr>-->
-    <!--      </tbody>-->
-    <!--    </table>-->
-    <app-datatable v-else id="employees"
-                   :rows="employees"
-                   :columns="columns"
-                   has-actions>
-      <!--      <template #actions="varibla">-->
-      <template #actions="{rreshti}">
-        <router-link to="" class="btn btn-secondary">
-          <i class="bi bi-pencil-fill"></i>
-        </router-link>
-        <!--        <app-button class="btn btn-danger ms-2" @click="() => console.log(varibla.rreshti)">-->
-        <app-button class="btn btn-danger ms-2" @click="() => console.log(rreshti)">
-          <i class="bi bi-trash-fill"></i>
-        </app-button>
+  <transition appear>
+    <app-card>
+      <template #header>
+        <div class="d-flex justify-content-between">
+          <h5>Employees</h5>
+          <router-link :to="{name:'create-employee'}" class="btn btn-primary">Add</router-link>
+        </div>
       </template>
-    </app-datatable>
-  </app-card>
+
+      <div class="text-center" v-if="isLoading">
+        <app-spinner :is-loading="isLoading"/>
+      </div>
+      <!--    <table v-else class="table table-striped table-bordered" id="employees">-->
+      <!--      <thead>-->
+      <!--      <tr>-->
+      <!--        <th>#</th>-->
+      <!--        <th>First name</th>-->
+      <!--        <th>Last name</th>-->
+      <!--        <th>Department</th>-->
+      <!--        <th>Hire date</th>-->
+      <!--        <th>Email</th>-->
+      <!--      </tr>-->
+      <!--      </thead>-->
+      <!--      <tbody>-->
+      <!--      <tr v-for="employee in employees" :key="employee.id">-->
+      <!--        <td>{{ employee.id }}</td>-->
+      <!--        <td>{{ employee.firstName }}</td>-->
+      <!--        <td>{{ employee.lastName }}</td>-->
+      <!--        <td>{{ employee.department.name }}</td>-->
+      <!--        <td>{{ employee.hireDate }}</td>-->
+      <!--        <td>{{ employee.email }}</td>-->
+      <!--      </tr>-->
+      <!--      </tbody>-->
+      <!--    </table>-->
+      <app-datatable v-else id="employees"
+                     :rows="employees"
+                     :columns="columns"
+                     has-actions>
+        <!--      <template #actions="varibla">-->
+        <template #actions="{rreshti}">
+          <router-link
+              :to="{name: 'update-employee', params: {id: rreshti.id}}"
+              class="btn btn-secondary"
+          >
+            <i class="bi bi-pencil-fill"></i>
+          </router-link>
+          <!--        <app-button class="btn btn-danger ms-2" @click="() => console.log(varibla.rreshti)">-->
+          <app-button class="btn btn-danger ms-2" @click="onDeleteEmployee(rreshti.id)">
+            <i class="bi bi-trash-fill"></i>
+          </app-button>
+        </template>
+      </app-datatable>
+    </app-card>
+  </transition>
 </template>
 
 <style scoped></style>
